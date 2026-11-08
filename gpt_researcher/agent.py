@@ -478,6 +478,22 @@ class GPTResearcher:
         Returns:
             The generated report as a string.
         """
+        # Adaptive Deep Research publishes both outputs from the same validated state.
+        state = getattr(getattr(self, "deep_researcher", None), "state", None)
+        if state is not None:
+            from .skills.knowledge_export import write_artifacts, render_markdown
+            self.research_artifacts = write_artifacts(state)
+            report = render_markdown(state)
+            try:
+                from .actions.utils import stream_output
+                await stream_output("report", "adaptive_report", report, self.websocket)
+                if self.websocket:
+                    await self.websocket.send_json({"type": "path", "output": self.research_artifacts})
+            except Exception:
+                import logging
+                logging.getLogger(__name__).info("Report saved despite disconnected progress receiver")
+            return report
+
         # Use pre-generated images if available (generated during conduct_research)
         has_available_images = bool(self.available_images)
         

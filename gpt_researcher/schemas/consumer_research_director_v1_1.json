@@ -1,0 +1,950 @@
+{
+  "name": "research_director_v1_3",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "schema_version": {
+        "type": "string",
+        "enum": [
+          "1.2"
+        ]
+      },
+      "research_objective": {
+        "type": "string"
+      },
+      "as_of_date": {
+        "type": "string"
+      },
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "depth": {
+            "type": "string",
+            "enum": [
+              "Quick",
+              "Standard",
+              "Deep"
+            ]
+          },
+          "breadth": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "insight_emphasis": {
+            "type": "string"
+          },
+          "extraction_granularity": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "depth",
+          "breadth",
+          "verification",
+          "insight_emphasis",
+          "extraction_granularity"
+        ],
+        "additionalProperties": false
+      },
+      "research_log": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "investigations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "follow_up_investigations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verification_checks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stopping_reason": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "plan",
+          "investigations",
+          "follow_up_investigations",
+          "verification_checks",
+          "stopping_reason",
+          "limitations"
+        ],
+        "additionalProperties": false
+      },
+      "report_markdown": {
+        "type": "string"
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "publisher": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "publication_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accessed_date": {
+              "type": "string"
+            },
+            "source_kind": {
+              "type": "string",
+              "enum": [
+                "Primary",
+                "Secondary",
+                "Other"
+              ]
+            },
+            "independence_group": {
+              "type": "string"
+            },
+            "credibility_notes": {
+              "type": "string"
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "url",
+            "publisher",
+            "publication_date",
+            "accessed_date",
+            "source_kind",
+            "independence_group",
+            "credibility_notes",
+            "limitations"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "knowledge_records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "string",
+                  "enum": [
+                    "Source",
+                    "Finding",
+                    "Insight",
+                    "Observation",
+                    "Idea",
+                    "Reference",
+                    "Learning"
+                  ]
+                },
+                "Content": {
+                  "type": "string"
+                },
+                "Source URL": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "Evidence": {
+                  "type": "string"
+                },
+                "Topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "Entities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "Relationships": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "Confidence": {
+                  "type": "string",
+                  "enum": [
+                    "Verified",
+                    "Probable",
+                    "Hypothesis",
+                    "Unverified"
+                  ]
+                },
+                "Geography": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "Time Period": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": "string"
+                        },
+                        "end": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "start",
+                        "end"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "Implications": {
+                  "type": "string"
+                },
+                "Status": {
+                  "type": "string",
+                  "enum": [
+                    "Captured"
+                  ]
+                }
+              },
+              "required": [
+                "Name",
+                "Type",
+                "Content",
+                "Source URL",
+                "Evidence",
+                "Topics",
+                "Entities",
+                "Relationships",
+                "Confidence",
+                "Geography",
+                "Time Period",
+                "Implications",
+                "Status"
+              ],
+              "additionalProperties": false
+            },
+            "source_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "confidence_rationale": {
+              "type": "string"
+            },
+            "metadata_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "id",
+            "properties",
+            "source_ids",
+            "confidence_rationale",
+            "metadata_notes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "proposed_relationships": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "from_id": {
+              "type": "string"
+            },
+            "to_id": {
+              "type": "string"
+            },
+            "relationship": {
+              "type": "string",
+              "enum": [
+                "supports",
+                "contradicts",
+                "suggests",
+                "updates",
+                "contextualizes"
+              ]
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "from_id",
+            "to_id",
+            "relationship",
+            "rationale"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "proposed_options": {
+        "type": "object",
+        "properties": {
+          "Topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Entities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Geography": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "Topics",
+          "Entities",
+          "Geography"
+        ],
+        "additionalProperties": false
+      },
+      "validation": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "failed",
+              "partial"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notion_write_performed": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "checks",
+          "errors",
+          "warnings",
+          "notion_write_performed"
+        ],
+        "additionalProperties": false
+      },
+      "usage": {
+        "type": "object",
+        "properties": {
+          "search_actions": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "input_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "output_tokens": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "estimated_cost_usd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cost_notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "search_actions",
+          "input_tokens",
+          "output_tokens",
+          "estimated_cost_usd",
+          "cost_notes"
+        ],
+        "additionalProperties": false
+      },
+      "coverage": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "subquestion": {
+              "type": "string"
+            },
+            "importance": {
+              "type": "string",
+              "enum": [
+                "Critical",
+                "Supporting"
+              ]
+            },
+            "evidence_status": {
+              "type": "string",
+              "enum": [
+                "Direct",
+                "Proxy",
+                "Mixed",
+                "Unresolved",
+                "Inaccessible"
+              ]
+            },
+            "source_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "investigation_attempts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "purpose": {
+                    "type": "string"
+                  },
+                  "query_or_url": {
+                    "type": "string"
+                  },
+                  "observed_result": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "purpose",
+                  "query_or_url",
+                  "observed_result"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "remaining_gap": {
+              "type": "string"
+            },
+            "completion_basis": {
+              "type": "string"
+            },
+            "answer_status": {
+              "type": "string",
+              "enum": [
+                "Sufficient",
+                "Partial",
+                "Unresolved"
+              ]
+            },
+            "answer_requirements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "requirement": {
+                    "type": "string"
+                  },
+                  "importance": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "Supporting"
+                    ]
+                  },
+                  "acceptance_criterion": {
+                    "type": "string"
+                  },
+                  "answer_status": {
+                    "type": "string",
+                    "enum": [
+                      "Sufficient",
+                      "Partial",
+                      "Unresolved"
+                    ]
+                  },
+                  "answer_summary": {
+                    "type": "string"
+                  },
+                  "source_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "remaining_gap": {
+                    "type": "string"
+                  },
+                  "disposition": {
+                    "type": "string",
+                    "enum": [
+                      "Answered",
+                      "Access limited",
+                      "Not found after attempts",
+                      "Diminishing returns",
+                      "Effort limited"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "requirement",
+                  "importance",
+                  "acceptance_criterion",
+                  "answer_status",
+                  "answer_summary",
+                  "source_ids",
+                  "remaining_gap",
+                  "disposition"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "id",
+            "subquestion",
+            "importance",
+            "evidence_status",
+            "source_ids",
+            "investigation_attempts",
+            "remaining_gap",
+            "completion_basis",
+            "answer_status",
+            "answer_requirements"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "claim_audit": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "claim_id": {
+              "type": "string"
+            },
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "claim": {
+              "type": "string"
+            },
+            "material": {
+              "type": "boolean"
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_id": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "supporting_detail": {
+                    "type": "string"
+                  },
+                  "access_level": {
+                    "type": "string",
+                    "enum": [
+                      "Full text",
+                      "Abstract only",
+                      "Secondary summary",
+                      "Inaccessible"
+                    ]
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "Supported",
+                      "Partially supported",
+                      "Unsupported",
+                      "Unassessable"
+                    ]
+                  },
+                  "scope_notes": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "url",
+                  "location",
+                  "supporting_detail",
+                  "access_level",
+                  "verdict",
+                  "scope_notes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "overall_verdict": {
+              "type": "string",
+              "enum": [
+                "Supported",
+                "Partially supported",
+                "Unsupported",
+                "Unassessable"
+              ]
+            },
+            "correction_or_qualification": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "claim_id",
+            "record_ids",
+            "claim",
+            "material",
+            "checks",
+            "overall_verdict",
+            "correction_or_qualification"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "opportunity_assessments": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "type": "string"
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "High",
+                "Medium",
+                "Low",
+                "Unranked"
+              ]
+            },
+            "evidence_strength": {
+              "type": "string",
+              "enum": [
+                "Strong",
+                "Moderate",
+                "Weak",
+                "Insufficient"
+              ]
+            },
+            "supporting_record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "expected_value": {
+              "type": "string"
+            },
+            "feasibility": {
+              "type": "string"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "economics_known": {
+              "type": "string"
+            },
+            "economics_missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "next_test": {
+              "type": "string"
+            },
+            "success_criteria": {
+              "type": "string"
+            },
+            "criteria_basis": {
+              "type": "string",
+              "enum": [
+                "Evidence-grounded",
+                "Proposed for testing",
+                "Insufficient data"
+              ]
+            },
+            "priority_rationale": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "record_id",
+            "priority",
+            "evidence_strength",
+            "supporting_record_ids",
+            "expected_value",
+            "feasibility",
+            "dependencies",
+            "economics_known",
+            "economics_missing",
+            "next_test",
+            "success_criteria",
+            "criteria_basis",
+            "priority_rationale"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "freshness_checks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "requirement_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "result": {
+              "type": "string",
+              "enum": [
+                "Newer evidence found",
+                "No newer evidence found",
+                "Inaccessible",
+                "Not required",
+                "Not checked"
+              ]
+            },
+            "attempts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "purpose": {
+                    "type": "string"
+                  },
+                  "query_or_url": {
+                    "type": "string"
+                  },
+                  "observed_result": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "purpose",
+                  "query_or_url",
+                  "observed_result"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "retained_source_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "retained_data_period": {
+              "type": "string"
+            },
+            "conclusion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "requirement_ids",
+            "result",
+            "attempts",
+            "retained_source_ids",
+            "retained_data_period",
+            "conclusion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "completion_review": {
+        "type": "object",
+        "properties": {
+          "answer_status": {
+            "type": "string",
+            "enum": [
+              "Sufficient",
+              "Partial",
+              "Unresolved"
+            ]
+          },
+          "critical_partial_requirement_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "critical_unresolved_requirement_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "incomplete_freshness_requirement_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stopping_basis": {
+            "type": "string",
+            "enum": [
+              "Adequate evidence",
+              "Access limits",
+              "Diminishing returns",
+              "Effort limit",
+              "Mixed limits"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "answer_status",
+          "critical_partial_requirement_ids",
+          "critical_unresolved_requirement_ids",
+          "incomplete_freshness_requirement_ids",
+          "stopping_basis",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "schema_version",
+      "research_objective",
+      "as_of_date",
+      "parameters",
+      "research_log",
+      "report_markdown",
+      "sources",
+      "knowledge_records",
+      "proposed_relationships",
+      "proposed_options",
+      "validation",
+      "usage",
+      "coverage",
+      "claim_audit",
+      "opportunity_assessments",
+      "freshness_checks",
+      "completion_review"
+    ],
+    "additionalProperties": false
+  }
+}

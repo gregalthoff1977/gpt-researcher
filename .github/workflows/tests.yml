@@ -122,22 +122,12 @@ jobs:
               print(f"cached {name}")
           PY
 
-      # --forked runs each test in its own process. The suite currently leaks
-      # global state across modules -- several files pass alone and fail when
-      # run together -- so without this the results depend on collection order.
-      # Removing the flag is the goal; it is tracked separately, and until then
-      # it keeps the signal trustworthy rather than hiding the failures.
+      # Process isolation prevents upstream sys.modules fixtures leaking across modules.
       - name: Run offline suite
-        run: |
-          python -m pytest tests/ \
-            --forked \
-            --timeout=60 \
-            -p no:warnings \
-            --deselect tests/test_researcher_logging.py \
-            --deselect tests/test_logging_output.py \
-            --deselect tests/test_mcp.py
-      # These three belong to a live suite, not this one. The first two build a
-      # real OpenAI client at call time and need OPENAI_API_KEY. test_mcp.py
-      # runs an actual web-search research task ("latest updates in the NBA
-      # playoffs"), which hangs here rather than failing -- it only surfaced on
-      # a full 3.12 install, where every optional dependency is present.
+        run: python scripts/run_offline_tests.py
+      - name: Upload verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-verification-py${{ matrix.python-version }}
+          path: verification-results/

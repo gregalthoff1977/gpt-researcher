@@ -81,6 +81,10 @@ async def create_chat_completion(
         )
 
     # Get the provider from supported providers
+    from ..skills.research_observer import research_observer
+    observer = research_observer.get()
+    if observer:
+        observer.before_call()
     provider_kwargs = {'model': model}
 
     if model in SUPPORT_REASONING_EFFORT_MODELS:
@@ -120,11 +124,15 @@ async def create_chat_completion(
     max_attempts = 1 if (stream and websocket is not None) else 10
     last_exception: Exception | None = None
     for attempt in range(1, max_attempts + 1):
+        if observer:
+            observer.before_call()
         try:
             response = await provider.get_chat_response(
                 messages, stream, websocket, **kwargs
             )
         except Exception as exc:
+            if observer:
+                observer.record_call(messages, model, provider_kwargs, None, provider, attempt, type(exc).__name__)
             last_exception = exc
             logging.getLogger(__name__).warning(
                 f"LLM request failed (attempt {attempt}/{max_attempts}): {exc}"
@@ -135,6 +143,8 @@ async def create_chat_completion(
             break
 
         if not response:
+            if observer:
+                observer.record_call(messages, model, provider_kwargs, response, provider, attempt, "empty_response")
             last_exception = RuntimeError("Empty response from LLM provider")
             logging.getLogger(__name__).warning(
                 f"LLM returned empty response (attempt {attempt}/{max_attempts})"
@@ -155,6 +165,10 @@ async def create_chat_completion(
                 request_options=provider_kwargs,
             )
             cost_callback(llm_costs)
+
+        if observer:
+            observer.record_call(messages, model, provider_kwargs, response, provider, attempt, None,
+                                 llm_costs if cost_callback else None)
 
         return response
 

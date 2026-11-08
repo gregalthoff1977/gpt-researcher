@@ -586,6 +586,8 @@ const GPTResearcher = (() => {
           ${links.docx ? `<a href="${links.docx}" class="history-entry-action" target="_blank" title="Open Word Document"><i class="fas fa-file-word"></i> Word</a>` : ''}
           ${links.md ? `<a href="${links.md}" class="history-entry-action" target="_blank" title="Open Markdown File"><i class="fas fa-file-lines"></i> MD</a>` : ''}
           ${links.json ? `<a href="${links.json}" class="history-entry-action" target="_blank" title="Open JSON Data"><i class="fas fa-file-code"></i> JSON</a>` : ''}
+          ${links.trace ? `<a href="${links.trace}" class="history-entry-action" target="_blank" rel="noopener noreferrer">Trace</a>` : ''}
+          ${links.state ? `<a href="${links.state}" class="history-entry-action" target="_blank" rel="noopener noreferrer">State</a>` : ''}
         </div>
         <div class="history-entry-actions">
           <button class="history-entry-action delete-entry" title="Delete this research entry"><i class="fas fa-trash-alt"></i></button>
@@ -734,7 +736,9 @@ const GPTResearcher = (() => {
       pdf: downloadLinks.pdf || '',
       docx: downloadLinks.docx || '',
       md: downloadLinks.md || '',
-      json: downloadLinks.json || ''
+      json: downloadLinks.json || '',
+      trace: downloadLinks.trace || '',
+      state: downloadLinks.state || ''
     };
 
     console.debug('Saving history with links:', links);
@@ -1121,11 +1125,11 @@ const GPTResearcher = (() => {
       return;
     }
 
-    const { pdf, docx, md, json } = data.output;
+    const { pdf, docx, md, json, trace, state } = data.output;
     console.log('Received paths:', { pdf, docx, md, json });
 
     // Store these links for history
-    const currentLinks = { pdf, docx, md, json };
+    const currentLinks = { pdf, docx, md, json, trace, state };
 
     // Helper function to safely update link
     const updateLink = (id, path) => {
@@ -1150,6 +1154,29 @@ const GPTResearcher = (() => {
     updateLink('downloadLinkWordTop', docx);
     updateLink('downloadLinkMdTop', md);
     updateLink('downloadLinkJsonTop', json);
+    for (const [key, path] of Object.entries({trace, state})) {
+      const anchorId = `downloadAdaptive${key}`;
+      let anchor = document.getElementById(anchorId);
+      if (path && !anchor) {
+        const template = document.getElementById('downloadLinkJson');
+        if (template) {
+          anchor = document.createElement('a');
+          anchor.id = anchorId;
+          anchor.className = template.className;
+          anchor.target = '_blank';
+          anchor.rel = 'noopener noreferrer';
+          anchor.textContent = key === 'trace' ? 'Execution trace' : 'Research state';
+          template.parentElement.appendChild(anchor);
+        }
+      }
+      if (anchor) {
+        anchor.hidden = !path;
+        if (path) {
+          anchor.setAttribute('href', path);
+          anchor.classList.remove('disabled');
+        }
+      }
+    }
 
     // Make sure download buttons are visible when download links are ready
     showDownloadPanels();

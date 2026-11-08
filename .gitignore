@@ -62,3 +62,7 @@ CURSOR_RULES.md
 
 # Local context filter benchmark inputs (scraped pages)
 /evals/context_filter/runs/
+
+# Durable research checkpoints and local verification output
+data/
+verification-results/

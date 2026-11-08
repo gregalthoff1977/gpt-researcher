@@ -276,7 +276,7 @@ class DeepResearchSkill:
                 "role": "user",
                 "content": (
                     f"Given the following prompt, generate {num_queries} unique search queries to research the topic thoroughly. "
-                    "For each query, provide a research goal.\n\n"
+                    "For each query, provide an independently assessable research question and evidence acceptance criterion as its researchGoal. Cover meaningful consumer segments, actual behavior, needs and motivations, barriers and trade-offs, occasions, say-do gaps, change, contradictions and competing explanations as relevant to the assignment. Include firsthand and original research routes; do not substitute category sales for consumer evidence.\n\n"
                     "Return ONLY a JSON array of objects using this exact schema:\n"
                     '[{"query": "<search query>", "researchGoal": "<research goal>"}]\n\n'
                     f"Prompt: {query}"
@@ -290,7 +290,9 @@ class DeepResearchSkill:
             model=self.researcher.cfg.strategic_llm_model,
             reasoning_effort=self.researcher.cfg.reasoning_effort,
             temperature=0.4,
-            llm_kwargs=self.researcher.cfg.llm_kwargs
+            llm_kwargs=getattr(self.researcher.cfg, "llm_kwargs", {}),
+            max_tokens=getattr(self.researcher.cfg, "strategic_token_limit", 32000),
+            cost_callback=getattr(self.researcher, "add_costs", None)
         )
 
         return parse_search_queries_response(response, num_queries)
@@ -377,7 +379,7 @@ Return ONLY a JSON object using this exact schema:
             temperature=0.4,
             reasoning_effort=ReasoningEfforts.High.value,
             # Needs headroom for reasoning tokens on reasoning models
-            max_tokens=4000,
+            max_tokens=getattr(self.researcher.cfg, "strategic_token_limit", 32000),
             llm_kwargs=self.researcher.cfg.llm_kwargs
         )
 
@@ -393,195 +395,13 @@ Return ONLY a JSON object using this exact schema:
             visited_urls: Set[str] = None,
             on_progress=None
     ) -> Dict[str, Any]:
-        """Conduct deep iterative research"""
-        print(f"\n📊 DEEP RESEARCH: depth={depth}, breadth={breadth}, query={query[:100]}...", flush=True)
-        if learnings is None:
-            learnings = []
-        if citations is None:
-            citations = {}
-        if visited_urls is None:
-            visited_urls = set()
-
-        all_learnings = learnings.copy()
-        all_citations = citations.copy()
-        all_visited_urls = visited_urls.copy()
-        all_context = []
-        all_sources = []
-
-        progress = ResearchProgress(depth, breadth)
-
-        if on_progress:
-            on_progress(progress)
-
-        # Generate search queries
-        print(f"🔎 Generating {breadth} search queries...", flush=True)
-        serp_queries = await self.generate_search_queries(query, num_queries=breadth)
-        print(f"✅ Generated {len(serp_queries)} queries: {[q['query'] for q in serp_queries]}", flush=True)
-        progress.total_queries = len(serp_queries)
-        if not serp_queries:
-            logger.warning("Deep research generated zero search queries; stopping descent.")
-            return {
-                'learnings': all_learnings,
-                'visited_urls': all_visited_urls,
-                'citations': all_citations,
-                'context': all_context,
-                'sources': all_sources,
-            }
-
-        # Process queries with concurrency limit
-        semaphore = asyncio.Semaphore(self.concurrency_limit)
-
-        async def process_query(serp_query: Dict[str, str]) -> Optional[Dict[str, Any]]:
-            async with semaphore:
-                try:
-                    progress.current_query = serp_query['query']
-                    if on_progress:
-                        on_progress(progress)
-
-                    from .. import GPTResearcher
-                    researcher = GPTResearcher(
-                        query=serp_query['query'],
-                        report_type=ReportType.ResearchReport.value,
-                        report_source=ReportSource.Web.value,
-                        tone=self.tone,
-                        websocket=self.websocket,
-                        config_path=self.config_path,
-                        headers=self.headers,
-                        visited_urls=self.visited_urls,
-                        # Propagate MCP configuration to nested researchers
-                        mcp_configs=self.researcher.mcp_configs,
-                        mcp_strategy=self.researcher.mcp_strategy
-                    )
-
-                    # Conduct research
-                    context = await researcher.conduct_research()
-
-                    # Get results and visited URLs
-                    visited = researcher.visited_urls
-                    sources = researcher.research_sources
-
-                    # Process results to extract learnings and citations
-                    results = await self.process_research_results(
-                        query=serp_query['query'],
-                        context=context
-                    )
-
-                    # Update progress
-                    progress.completed_queries += 1
-                    progress.current_breadth += 1
-                    if on_progress:
-                        on_progress(progress)
-
-                    return {
-                        'learnings': results['learnings'],
-                        'visited_urls': list(visited),
-                        'followUpQuestions': results['followUpQuestions'],
-                        'researchGoal': serp_query['researchGoal'],
-                        'citations': results['citations'],
-                        'context': "\n".join(context) if isinstance(context, list) else (context or ""),
-                        'sources': sources if sources else []
-                    }
-
-                except Exception as e:
-                    import traceback
-                    error_details = traceback.format_exc()
-                    logger.error(f"Error processing query '{serp_query['query']}': {str(e)}")
-                    print(f"\n❌ DEEP RESEARCH ERROR: {str(e)}\n{error_details}", flush=True)
-                    return None
-
-        # Process queries concurrently with limit
-        tasks = [process_query(query) for query in serp_queries]
-        results = await asyncio.gather(*tasks)
-        results = [r for r in results if r is not None]
-
-        # Update breadth progress based on successful queries
-        progress.current_breadth = len(results)
-        if on_progress:
-            on_progress(progress)
-
-        # #1579: if every branch at this level failed (bad API key, offline
-        # retriever, etc.), stop instead of endlessly generating follow-ups
-        # from empty goals / empty learnings.
-        if not results:
-            logger.warning(
-                "Deep research produced no successful query results at depth=%s; stopping descent.",
-                depth,
-            )
-            print(
-                f"\nDEEP RESEARCH: no successful results at depth={depth}; stopping to avoid infinite work.",
-                flush=True,
-            )
-            return {
-                'learnings': all_learnings,
-                'visited_urls': all_visited_urls,
-                'citations': all_citations,
-                'context': all_context,
-                'sources': all_sources,
-            }
-
-        # Collect all results
-        for result in results:
-            all_learnings.extend(result['learnings'])
-            all_visited_urls.update(result['visited_urls'])
-            all_citations.update(result['citations'])
-            if result['context']:
-                # Use extend, not append: when CURATE_SOURCES=True, result['context'] is
-                # a List[dict]. append() nests it as a single item, which causes
-                # "\n".join() to crash later with "expected str instance, dict found".
-                ctx = result['context']
-                if isinstance(ctx, list):
-                    all_context.extend(ctx)
-                else:
-                    all_context.append(ctx)
-            if result['sources']:
-                all_sources.extend(result['sources'])
-
-            # Continue deeper if needed
-            if depth > 1:
-                new_breadth = max(2, breadth // 2)
-                new_depth = depth - 1
-                progress.current_depth += 1
-
-                # Create next query from research goal and follow-up questions
-                next_query = f"""
-                Previous research goal: {result['researchGoal']}
-                Follow-up questions: {' '.join(result['followUpQuestions'])}
-                """
-
-                # Recursive research
-                deeper_results = await self.deep_research(
-                    query=next_query,
-                    breadth=new_breadth,
-                    depth=new_depth,
-                    learnings=all_learnings,
-                    citations=all_citations,
-                    visited_urls=all_visited_urls,
-                    on_progress=on_progress
-                )
-
-                all_learnings = deeper_results['learnings']
-                all_visited_urls.update(deeper_results['visited_urls'])
-                all_citations.update(deeper_results['citations'])
-                if deeper_results.get('context'):
-                    all_context.extend(deeper_results['context'])
-                if deeper_results.get('sources'):
-                    all_sources.extend(deeper_results['sources'])
-
-        # Update class tracking
-        self.context.extend(all_context)
-        self.research_sources.extend(all_sources)
-
-        # Trim context to stay within word limits
-        trimmed_context = trim_context_to_word_limit(all_context)
-        logger.info(f"Trimmed context from {len(all_context)} items to {len(trimmed_context)} items to stay within word limit")
-
-        return {
-            'learnings': list(set(all_learnings)),
-            'visited_urls': list(all_visited_urls),
-            'citations': all_citations,
-            'context': trimmed_context,
-            'sources': all_sources
-        }
+        """Run adaptive evidence-driven waves, retaining the public result contract."""
+        from .adaptive_research import AdaptiveController
+        controller = AdaptiveController(self, breadth, depth, on_progress)
+        result = await controller.execute(query, learnings, citations, visited_urls)
+        self.context = list(result['context'])
+        self.research_sources = list(result['sources'])
+        return result
 
     async def run(self, on_progress=None) -> str:
         """Run the deep research process and generate final report"""
@@ -591,16 +411,8 @@ Return ONLY a JSON object using this exact schema:
         # Log initial costs
         initial_costs = self.researcher.get_costs()
 
-        follow_up_questions = await self.generate_research_plan(self.researcher.query)
-        answers = ["Automatically proceeding with research"] * len(follow_up_questions)
-
-        qa_pairs = [f"Q: {q}\nA: {a}" for q, a in zip(follow_up_questions, answers)]
-        combined_query = f"""
-        Initial Query: {self.researcher.query}\nFollow - up Questions and Answers:\n
-        """ + "\n".join(qa_pairs)
-
         results = await self.deep_research(
-            query=combined_query,
+            query=self.researcher.query,
             breadth=self.breadth,
             depth=self.depth,
             on_progress=on_progress

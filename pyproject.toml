@@ -6,6 +6,8 @@ authors = ["Assaf Elovic <assaf.elovic@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+include = ["gpt_researcher/schemas/*.json"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -15,7 +17,7 @@ asyncio_mode = "auto"
 addopts = "-v"
 testpaths = ["tests"]
 python_files = "test_*.py"
-asyncio_fixture_loop_scope = "function"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.uv.sources]
 gpt-researcher = { workspace = true }

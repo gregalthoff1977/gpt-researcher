@@ -12,8 +12,8 @@ DEFAULT_CONFIG: BaseConfig = {
     # these map to max_completion_tokens, which also covers reasoning tokens -
     # hence the generous headroom on top of the visible output.
     "FAST_TOKEN_LIMIT": 6000,
-    "SMART_TOKEN_LIMIT": 12000,
-    "STRATEGIC_TOKEN_LIMIT": 8000,
+    "SMART_TOKEN_LIMIT": 32000,
+    "STRATEGIC_TOKEN_LIMIT": 32000,
     "BROWSE_CHUNK_MAX_LENGTH": 8192,
     "CURATE_SOURCES": False,
     "SUMMARY_TOKEN_LIMIT": 700,
@@ -37,6 +37,13 @@ DEFAULT_CONFIG: BaseConfig = {
     "EMBEDDING_KWARGS": {},
     "VERBOSE": False,
     # Deep research specific settings
+    "DEEP_RESEARCH_MAX_SECONDS": 1200.0,
+    "DEEP_RESEARCH_MAX_COST_USD": 5.0,
+    "DEEP_RESEARCH_MAX_SEARCHES": 40,
+    "DEEP_RESEARCH_MAX_WAVES": 0,  # 0 => depth bounded evidence waves
+    "DEEP_RESEARCH_MIN_GAIN": 0.15,
+    "DEEP_RESEARCH_CALL_TIMEOUT": 180.0,
+    "RESEARCH_STATE_DIR": "data/research",
     "DEEP_RESEARCH_BREADTH": 3,
     "DEEP_RESEARCH_DEPTH": 2,
     "DEEP_RESEARCH_CONCURRENCY": 4,

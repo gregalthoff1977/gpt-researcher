@@ -65,7 +65,11 @@ class CustomLogsHandler:
         """Store log data and send to websocket"""
         # Send to websocket for real-time display
         if self.websocket:
-            await self.websocket.send_json(data)
+            try:
+                await self.websocket.send_json(data)
+            except (WebSocketDisconnect, RuntimeError, OSError):
+                self.websocket = None
+                logger.info("Research client disconnected; durable research continues")
             
         # Read current log file
         with open(self.log_file, 'r') as f:
@@ -152,6 +156,9 @@ async def handle_start_command(websocket, data: str, manager):
         print("Error: Missing task or report_type")
         return
 
+    if hasattr(websocket, "state"):
+        websocket.state.research_artifacts = {}
+
     # Create logs handler with websocket and task
     logs_handler = CustomLogsHandler(websocket, task)
     # Initialize log content with query
@@ -183,6 +190,8 @@ async def handle_start_command(websocket, data: str, manager):
     file_paths = await generate_report_files(report, sanitized_filename)
     # Add JSON log path to file_paths
     file_paths["json"] = os.path.relpath(logs_handler.log_file)
+    if hasattr(websocket, "state"):
+        file_paths.update(getattr(websocket.state, "research_artifacts", {}))
     await send_file_paths(websocket, file_paths)
 
 

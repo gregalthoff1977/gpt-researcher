@@ -25,6 +25,7 @@ setup(
     description="GPT Researcher is an autonomous agent designed for comprehensive web research on any task",
     package_dir={'gpt_researcher': 'gpt_researcher'},
     packages=find_packages(exclude=exclude_packages),
+    package_data={"gpt_researcher": ["schemas/*.json"]},
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/assafelovic/gpt-researcher",

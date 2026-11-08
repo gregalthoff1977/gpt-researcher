@@ -4,12 +4,8 @@ Callers (actions.query_processing.get_search_results -> List[Dict]) and
 skills.researcher (`len(search_results)`) crash on None.
 """
 
-import sys
-import types
+import requests
 from unittest.mock import patch
-
-if "requests" not in sys.modules:
-    sys.modules["requests"] = types.ModuleType("requests")
 
 from gpt_researcher.retrievers.pubmed_central.pubmed_central import (  # noqa: E402
     PubMedCentralSearch,

@@ -1,0 +1,290 @@
+{
+  "name": "Knowledge",
+  "schema": {
+    "Confidence": {
+      "name": "Confidence",
+      "type": "select",
+      "options": [
+        {
+          "name": "Verified"
+        },
+        {
+          "name": "Probable"
+        },
+        {
+          "name": "Hypothesis"
+        },
+        {
+          "name": "Unverified"
+        }
+      ]
+    },
+    "Content": {
+      "name": "Content",
+      "type": "text"
+    },
+    "Created At": {
+      "name": "Created At",
+      "type": "created_time"
+    },
+    "Entities": {
+      "name": "Entities",
+      "type": "multi_select",
+      "options": [
+        {
+          "name": "Mondelēz International"
+        },
+        {
+          "name": "PepsiCo"
+        },
+        {
+          "name": "pladis"
+        },
+        {
+          "name": "NielsenIQ"
+        },
+        {
+          "name": "Gallup"
+        },
+        {
+          "name": "IWSR"
+        },
+        {
+          "name": "Datassential"
+        },
+        {
+          "name": "Athletic Brewing Company"
+        },
+        {
+          "name": "Heineken"
+        },
+        {
+          "name": "Dry Atlas"
+        },
+        {
+          "name": "Alcohol and Tobacco Tax and Trade Bureau"
+        },
+        {
+          "name": "General Atlantic"
+        },
+        {
+          "name": "Sidley Austin"
+        },
+        {
+          "name": "Cornell University"
+        },
+        {
+          "name": "Brewers Association"
+        }
+      ]
+    },
+    "Evidence": {
+      "name": "Evidence",
+      "type": "text"
+    },
+    "Geography": {
+      "name": "Geography",
+      "type": "multi_select",
+      "options": [
+        {
+          "name": "Global"
+        },
+        {
+          "name": "North America"
+        },
+        {
+          "name": "United States"
+        },
+        {
+          "name": "Canada"
+        },
+        {
+          "name": "Mexico"
+        },
+        {
+          "name": "Europe"
+        },
+        {
+          "name": "European Union"
+        },
+        {
+          "name": "Belgium"
+        },
+        {
+          "name": "United Kingdom"
+        },
+        {
+          "name": "France"
+        },
+        {
+          "name": "Germany"
+        },
+        {
+          "name": "Latin America"
+        },
+        {
+          "name": "Asia-Pacific"
+        },
+        {
+          "name": "China"
+        },
+        {
+          "name": "Japan"
+        },
+        {
+          "name": "India"
+        },
+        {
+          "name": "Australia"
+        },
+        {
+          "name": "Middle East"
+        },
+        {
+          "name": "Africa"
+        }
+      ]
+    },
+    "Implications": {
+      "name": "Implications",
+      "type": "text"
+    },
+    "Name": {
+      "name": "Name",
+      "type": "title"
+    },
+    "Relationships": {
+      "name": "Relationships",
+      "type": "relation"
+    },
+    "Source URL": {
+      "name": "Source URL",
+      "type": "url"
+    },
+    "Status": {
+      "name": "Status",
+      "type": "select",
+      "options": [
+        {
+          "name": "Captured"
+        },
+        {
+          "name": "Processed"
+        },
+        {
+          "name": "Reviewed"
+        },
+        {
+          "name": "Archived"
+        }
+      ]
+    },
+    "Time Period": {
+      "name": "Time Period",
+      "type": "date"
+    },
+    "Topics": {
+      "name": "Topics",
+      "type": "multi_select",
+      "options": [
+        {
+          "name": "Beverage Trends"
+        },
+        {
+          "name": "Food Trends"
+        },
+        {
+          "name": "Consumer Behavior"
+        },
+        {
+          "name": "Brand Strategy"
+        },
+        {
+          "name": "Brand Identity"
+        },
+        {
+          "name": "Packaging Design"
+        },
+        {
+          "name": "Packaging Innovation"
+        },
+        {
+          "name": "Flexible Packaging"
+        },
+        {
+          "name": "Sustainability"
+        },
+        {
+          "name": "Recycling"
+        },
+        {
+          "name": "Digital Watermarks"
+        },
+        {
+          "name": "Regulation"
+        },
+        {
+          "name": "Retail"
+        },
+        {
+          "name": "Product Launches"
+        },
+        {
+          "name": "Ingredients"
+        },
+        {
+          "name": "Functional Beverages"
+        },
+        {
+          "name": "Non-Alcoholic Beverages"
+        },
+        {
+          "name": "Beer"
+        },
+        {
+          "name": "Spirits"
+        },
+        {
+          "name": "Ready-to-Drink"
+        },
+        {
+          "name": "Pricing"
+        },
+        {
+          "name": "Distribution"
+        }
+      ]
+    },
+    "Type": {
+      "name": "Type",
+      "type": "select",
+      "options": [
+        {
+          "name": "Source"
+        },
+        {
+          "name": "Finding"
+        },
+        {
+          "name": "Insight"
+        },
+        {
+          "name": "Observation"
+        },
+        {
+          "name": "Idea"
+        },
+        {
+          "name": "Reference"
+        },
+        {
+          "name": "Learning"
+        }
+      ]
+    },
+    "Updated At": {
+      "name": "Updated At",
+      "type": "last_edited_time"
+    }
+  }
+}

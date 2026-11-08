@@ -177,6 +177,11 @@ async def run_agent(task, report_type, report_source, source_urls, document_urls
         )
         report = await researcher.run()
 
+    if report_type != "multi_agents":
+        artifacts = getattr(researcher.gpt_researcher, "research_artifacts", {})
+        if artifacts and hasattr(websocket, "state"):
+            websocket.state.research_artifacts = artifacts
+
     if report_type != "multi_agents" and return_researcher:
         return report, researcher.gpt_researcher
     else:

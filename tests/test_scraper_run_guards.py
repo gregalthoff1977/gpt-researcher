@@ -28,7 +28,9 @@ def _load_scraper_module():
         pass
 
     utils_workers.WorkerPool = WorkerPool
-    sys.modules["gpt_researcher.utils"] = types.ModuleType("gpt_researcher.utils")
+    utils_pkg = types.ModuleType("gpt_researcher.utils")
+    utils_pkg.__path__ = [str(root / "gpt_researcher" / "utils")]
+    sys.modules["gpt_researcher.utils"] = utils_pkg
     sys.modules["gpt_researcher.utils.workers"] = utils_workers
 
     scraper_pkg = types.ModuleType("gpt_researcher.scraper")

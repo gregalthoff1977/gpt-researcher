@@ -19,6 +19,7 @@ too-short content.
 
 import random
 import unittest
+from unittest.mock import patch
 
 from gpt_researcher.scraper.scraper import (
     Scraper,
@@ -132,7 +133,9 @@ class ExtractDataFromUrlContentQualityTests(unittest.IsolatedAsyncioTestCase):
             {"_canned_content": canned_content},
         )
         scraper.get_scraper = lambda link: stub_cls
-        return await scraper.extract_data_from_url("https://example.com/x", scraper.session)
+        with patch("gpt_researcher.utils.url_security.socket.getaddrinfo",
+                   return_value=[(2, 1, 6, "", ("93.184.216.34", 443))]):
+            return await scraper.extract_data_from_url("https://example.com/x", scraper.session)
 
     async def test_anti_bot_page_treated_as_fetch_failure(self):
         text = (
