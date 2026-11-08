@@ -303,3 +303,19 @@ async def test_agent_writer_publishes_state_not_another_ungrounded_report(tmp_pa
     assert "## Unanswered questions" in report
     assert Path(fake.research_artifacts["json"]).is_file()
     assert Path(fake.research_artifacts["trace"]).is_file()
+
+
+@pytest.mark.asyncio
+async def test_duplicate_initial_queries_share_work_and_retain_questions(tmp_path, monkeypatch):
+    researcher = parent(tmp_path)
+    skill = DeepResearchSkill(researcher)
+    monkeypatch.setattr(skill, "generate_search_queries", AsyncMock(return_value=[
+        {"query": "coffee convenience", "researchGoal": "Convenience behavior"},
+        {"query": "COFFEE convenience!", "researchGoal": "Convenience motivations"}]))
+    controller = AdaptiveController(skill, 3, 2)
+    controller.state = ResearchState(query="fixture", fingerprint="fixture")
+    await controller.plan("fixture")
+    assert len(controller.state.questions) == 2
+    assert len(controller.state.investigations) == 1
+    assert controller.state.investigations[0].question_ids == ["Q001", "Q002"]
+    assert any(e["event"] == "initial_query_deduplicated" for e in controller.state.events)

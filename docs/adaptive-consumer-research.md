@@ -123,13 +123,13 @@ research quality.
 
 ## Automated verification
 
-Python 3.12 offline suite: **606 passed, 1 skipped, 0 failed** across 136 modules.
+Python 3.12 offline suite: **607 passed, 1 skipped, 0 failed** across 136 modules.
 The skip is the existing `test_security_fix.py` module whose helpers were removed
 upstream. The same three live modules excluded by upstream CI remain excluded:
 `test_researcher_logging.py`, `test_logging_output.py`, and `test_mcp.py`.
 No billable/live research was used for development verification.
 
-The 34 new tests cover adaptive selection using accumulated evidence, actual
+The 35 new tests cover adaptive selection using accumulated evidence, actual
 Deep Research integration, firsthand/primary/secondary/opinion classification,
 contradictions and competing hypotheses, unsupported-claim gates, recorded
 rationales, SQLite restore without completed-search duplication, failed retrieval,
@@ -137,7 +137,7 @@ malformed evaluations, available-cost guard, redaction, exact Markdown/Knowledge
 exports, final download paths, authentication, existing UI/assets and WebSocket
 ping, mounted output paths and browser disconnect handling.
 
-A 71-test focused regression set passes and also runs against the exact container
+A 72-test focused regression set passes and also runs against the exact container
 sources during image build. Pre-deploy readiness checks authenticate the actual
 interface, load static assets, round-trip SQLite state and validate the exact
 Knowledge schema. An outbound socket guard prevents readiness from performing

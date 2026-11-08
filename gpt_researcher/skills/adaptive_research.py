@@ -115,13 +115,22 @@ class AdaptiveController:
 
     async def plan(self, query):
         initial = await self.skill.generate_search_queries(query, num_queries=self.breadth)
+        planned = {}
         for i, item in enumerate(initial):
             qid = f"Q{i + 1:03d}"
             goal = item["researchGoal"]
             self.state.questions[qid] = Question(id=qid, question=goal,
                 acceptance_criterion=f"Direct, claim-suitable evidence answering {goal}; preserve population, geography, time, method, firsthand accounts where relevant, and competing explanations.")
-            self.state.investigations.append(Investigation(query=item["query"], question_ids=[qid],
-                rationale="Initial investigation of a planned requirement before evidence was collected."))
+            key = normalize_query(item["query"])
+            if key in planned:
+                planned[key].question_ids.append(qid)
+                self.state.record("initial_query_deduplicated", query=item["query"],
+                    question_id=qid, reused_investigation_id=planned[key].id)
+                continue
+            task = Investigation(query=item["query"], question_ids=[qid],
+                rationale="Initial investigation of a planned requirement before evidence was collected.")
+            planned[key] = task
+            self.state.investigations.append(task)
         self.state.record("plan", questions=[q.model_dump() for q in self.state.questions.values()],
                           investigations=[i.model_dump() for i in self.state.investigations])
 
